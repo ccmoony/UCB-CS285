@@ -104,7 +104,7 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
             # We're using the memory-efficient replay buffer,
             # so we only insert next_observation (not observation)
             ...
-            replay_buffer.insert(action, reward, next_observation, done and not truncated)
+            replay_buffer.insert(action, reward, next_observation[3], done and not truncated)
         else:
             # We're using the regular replay buffer
             replay_buffer.insert(observation, action, reward, next_observation, done and not truncated)

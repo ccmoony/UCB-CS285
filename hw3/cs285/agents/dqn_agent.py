@@ -77,12 +77,13 @@ class DQNAgent(nn.Module):
             else:
                 next_action = torch.argmax(next_qa_values, dim=1)
             
-            next_q_values = next_qa_values.gather(dim = 1, index = next_action.unsqueeze(1))
-            target_values = reward.unsqueeze(dim=1) + self.discount * (1 - done) * next_q_values
+            next_q_values = next_qa_values.gather(dim = 1, index = next_action.unsqueeze(1)).squeeze(1)
+            target_values = reward + self.discount * ~ (done) * next_q_values
 
         # TODO(student): train the critic with the target values
         qa_values = self.critic(obs)
-        q_values = qa_values.gather(dim = 1, index = action.unsqueeze(1)) # Compute from the data actions; see torch.gather
+        q_values = qa_values.gather(dim = 1, index = action.unsqueeze(1)).squeeze(1) # Compute from the data actions; see torch.gather
+        # print(q_values.shape, target_values.shape)
         loss = self.critic_loss(q_values, target_values)
 
 
