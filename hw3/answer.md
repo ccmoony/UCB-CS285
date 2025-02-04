@@ -39,7 +39,7 @@ python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/sanity_invertedpendulum
 python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/halfcheetah_reinforce1.yaml
 python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/halfcheetah_reinforce10.yaml
 ```
-![SAC-halfcheetah](figures/SAC-halfcheetah.png)
+![SAC-halfcheetah](figures/SAC-halfCheetah.png)
 
 We can see from the graph that configuration takes many samples from the actor for computing the REINFORCE gradient performs better than the one with only 1 sample.
 ## Actor with REPARAMETRIZE
@@ -51,7 +51,7 @@ python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/sanity_invertedpendulum
 ```shell
 python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/halfcheetah_reparametrize.yaml
 ```
-![SAC-halfcheetah-repara](figures/SAC-halfcheetah-repara.png)
+![SAC-halfcheetah-repara](figures/SAC-halfCheetah-repara.png)
 ### Deliverables 7: Actor with REPARAMETRIZE on Humanoid-v4
 ```shell
 python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/humanoid.yaml
