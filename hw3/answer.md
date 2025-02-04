@@ -67,4 +67,5 @@ python cs285/scripts/run_hw3_sac.py -cfg experiments/sac/hopper_clipq.yaml
 ![qvalues](figures/SAC-hopper-qvalues.png)
 
 ![evalreturn](figures/SAC-hopper-evalreturn.png)
+
 where black represents single-Q, pink represents double-Q, blue represents clipped double-Q.
