@@ -5,9 +5,11 @@ python cs285/scripts/run_hw4.py -cfg experiments/mpc/halfcheetah_0_iter.yaml
 ![inital_loss](data/cheetah-cs285-v0_cheetah_0iter_l1_h32_mpcrandom_horizon10_actionseq1000_04-02-2025_14-03-38/itr_0_loss_curve.png)
 
 Change the hidden size to 64 and run again:
+
 ![hidden_size_64](data/cheetah-cs285-v0_cheetah_0iter_l1_h64_mpcrandom_horizon10_actionseq1000_04-02-2025_14-06-01/itr_0_loss_curve.png)
 
 Change the num_layers to 4 and run again:
+
 ![num_layers_4](data/cheetah-cs285-v0_cheetah_0iter_l4_h32_mpcrandom_horizon10_actionseq1000_04-02-2025_14-06-38/itr_0_loss_curve.png)
 ## Problem 2
 ```shell
