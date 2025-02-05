@@ -50,17 +50,47 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
 
     # Replay buffer
     replay_buffer = ReplayBuffer(capacity=config["total_steps"])
+    with open(os.path.join(args.dataset_dir, f"{config['dataset_name']}.pkl"), "rb") as f:
+        replay_buffer = pickle.load(f)
 
     observation = env.reset()
 
     recent_observations = []
 
     num_offline_steps = config["offline_steps"]
-    num_online_steps = config["total_steps"] - num_offline_steps
+    epsilon = None
+    # num_online_steps = config["total_steps"] - num_offline_steps
 
     for step in tqdm.trange(config["total_steps"], dynamic_ncols=True):
         # TODO(student): Borrow code from another online training script here. Only run the online training loop after `num_offline_steps` steps.
+        if step == num_offline_steps:
+            replay_buffer = ReplayBuffer(capacity=config["total_steps"])
+            epsilon = exploration_schedule.value(step)
+            while True:
+                action = agent.get_action(observation, epsilon)
+                next_observation, reward, done, info = env.step(action)
+                truncated = info.get("TimeLimit.truncated", False)
+                replay_buffer.insert(observation, action, reward, next_observation, done and not truncated)
+                recent_observations.append(observation)
+                if done:
+                    observation = env.reset()
+                else:
+                    observation = next_observation
+                if replay_buffer.size >= config["batch_size"]:
+                    break
 
+        if step > num_offline_steps:
+            epsilon = exploration_schedule.value(step)
+            action = agent.get_action(observation, epsilon)
+            next_observation, reward, done, info = env.step(action)
+            truncated = info.get("TimeLimit.truncated", False)
+            replay_buffer.insert(observation, action, reward, next_observation, done and not truncated)
+            recent_observations.append(observation)
+
+            if done:
+                observation = env.reset()
+            else:
+                observation = next_observation
         # Main training loop
         batch = replay_buffer.sample(config["batch_size"])
 
@@ -107,7 +137,7 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
                 logger.log_scalar(np.max(ep_lens), "eval/ep_len_max", step)
                 logger.log_scalar(np.min(ep_lens), "eval/ep_len_min", step)
 
-        if step % args.visualize_interval == 0:
+        if step >= num_offline_steps and step % args.visualize_interval == 0:
             env_pointmass: Pointmass = env.unwrapped
             observations = np.stack(recent_observations)
             recent_observations = []
@@ -129,7 +159,7 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
         env_pointmass, agent, replay_buffer.observations[: config["total_steps"]]
     )
     fig.suptitle("State coverage")
-    filename = os.path.join("exploration", f"{config['log_name']}.png")
+    filename = os.path.join("exploration_visualization", f"{config['log_name']}.png")
     fig.savefig(filename)
     print("Saved final heatmap to", filename)
 
