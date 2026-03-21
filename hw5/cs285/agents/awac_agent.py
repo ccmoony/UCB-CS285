@@ -89,7 +89,7 @@ class AWACAgent(DQNAgent):
         advantages = self.compute_advantage(observations, actions, action_dist)
         weight = torch.exp(advantages / self.temperature)
         log_probs = action_dist.log_prob(actions)
-        loss = - (log_probs * weight).mean()
+        loss = - (log_probs * weight.detach()).mean()
 
         self.actor_optimizer.zero_grad()
         loss.backward()
